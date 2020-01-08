@@ -1,80 +1,18 @@
-version: '3'
+version: '2'
+
 services:
-  redis_master:
-    image: redis:3
-    container_name: redis_master
-    ports:
-      - '6379:6379'
-    networks:
-      - app-tier
-  redis_slave:
-    image: redis:3
-    container_name: redis_slave
-    command: redis-server --port 6380 --slaveof "${EXTERNAL_HOST}" 6379 --slave-announce-ip "${EXTERNAL_HOST}"
-    ports:
-      - '6380:6380'
-    networks:
-      - app-tier
-  sentinel:
-    build: ./sentinel
-    container_name: redis_sentinel
-    ports:
-      - '26379:26379'
+  redis-sentinel:
+    image: bitnami/redis-sentinel:5.0
+    volumes:
+      - redis-sentinel_data:/bitnami
+  redis:
+    image: bitnami/redis:5.0
     environment:
-      - SENTINEL_NAME=mysentinel
-      - HOST_IP="${EXTERNAL_HOST}"
-    networks:
-      - app-tier  
-  mongodb:
-    image: mongo:latest
-    container_name: 'mongodb'
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null        
-    ports:
-        - 27017:27017
-    command: mongod --logpath=/dev/null # --quiet
-    networks:
-      - app-tier
-
-  # rabbitmq:
-    # image: bitnami/rabbitmq:latest
-    # environment:
-      # - RABBITMQ_USERNAME=user
-      # - RABBITMQ_PASSWORD=password
-      # # - RABBITMQ_NODE_TYPE=queue-ram            
-    # ports:
-      # - 15672:15672
-      # - 5672:5672
-    # volumes:
-      # - 'rabbitmqram1_data:/bitnami'
-    # networks:
-      # - app-tier
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
-    volumes:      
-      - 'rabbitmqram1_data:/bitnami'
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-ram 
-      # environment:
-        # RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
-        # RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-        # RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - app-tier
-
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis_data:/bitnami
 volumes:
-    rabbitmqstats_data:
-      driver: local
-    rabbitmqdisc1_data:
-      driver: local
-    rabbitmqram1_data:
-      driver: local    
-        
-networks:
-  app-tier:
-     driver: bridge
+  redis-sentinel_data:
+    driver: local
+  redis_data:
+    driver: local
