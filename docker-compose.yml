@@ -25,55 +25,7 @@ services:
       - HOST_IP="${EXTERNAL_HOST}"
     networks:
       - app-tier  
-  mongodb:
-    image: mongo:latest
-    container_name: 'mongodb'
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null        
-    ports:
-        - 27018:27017
-    command: mongod --logpath=/dev/null # --quiet
-    networks:
-      - app-tier
-
-  # rabbitmq:
-    # image: bitnami/rabbitmq:latest
-    # environment:
-      # - RABBITMQ_USERNAME=user
-      # - RABBITMQ_PASSWORD=password
-      # # - RABBITMQ_NODE_TYPE=queue-ram            
-    # ports:
-      # - 15672:15672
-      # - 5672:5672
-    # volumes:
-      # - 'rabbitmqram1_data:/bitnami'
-    # networks:
-      # - app-tier
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
-    volumes:      
-      - 'rabbitmqram1_data:/bitnami'
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-ram 
-      # environment:
-        # RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
-        # RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-        # RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - app-tier
-
-volumes:
-    rabbitmqstats_data:
-      driver: local
-    rabbitmqdisc1_data:
-      driver: local
-    rabbitmqram1_data:
-      driver: local    
+ 
         
 networks:
   app-tier:
