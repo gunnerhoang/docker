@@ -1,18 +1,21 @@
 version: '2'
 
+networks:
+  app-tier:
+    driver: bridge
+
 services:
-  redis-sentinel:
-    image: bitnami/redis-sentinel:5.0
-    volumes:
-      - redis-sentinel_data:/bitnami
   redis:
-    image: bitnami/redis:5.0
+    image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - redis_data:/bitnami
-volumes:
-  redis-sentinel_data:
-    driver: local
-  redis_data:
-    driver: local
+    networks:
+      - app-tier
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+    ports:
+      - '26379:26379'
+    networks:
+      - app-tier
