@@ -24,4 +24,5 @@ services:
       - SENTINEL_NAME=mysentinel
       - HOST_IP="${EXTERNAL_HOST}"
     networks:
-      - app-tier  
+      - app-tier
+
